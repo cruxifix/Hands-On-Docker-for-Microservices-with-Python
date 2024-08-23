@@ -9,6 +9,10 @@ on:
       - '*'
   workflow_dispatch:
 
+env:
+  DOCKER_COMPOSE_VERSION: 1.23.2
+  GIT_SHA: ${{ github.sha }}
+
 jobs:
   example_job:
     runs-on: ubuntu-latest
@@ -16,6 +20,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Run a test command
-        run: echo "Test is successful"
+      - name: Print environment variables
+        run: |
+          echo "DOCKER_COMPOSE_VERSION: $DOCKER_COMPOSE_VERSION"
+          echo "GIT_SHA: $GIT_SHA"
 
