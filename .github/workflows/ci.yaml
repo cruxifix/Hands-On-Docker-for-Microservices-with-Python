@@ -24,6 +24,7 @@ jobs:
         run: |
           echo "DOCKER_COMPOSE_VERSION: $DOCKER_COMPOSE_VERSION"
           echo "GIT_SHA: $GIT_SHA"
+
   setup_docker:
     runs-on: ubuntu-latest
     steps:
@@ -41,3 +42,29 @@ jobs:
           docker --version
           docker-compose version
 
+  unit_tests:
+    runs-on: ubuntu-latest
+    needs: setup_docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Unit Tests
+        run: |
+          cd ch4
+          docker-compose build db
+          docker-compose build test-postgresql
+          docker-compose run test-postgresql
+
+  static_analysis:
+    runs-on: ubuntu-latest
+    needs: setup_docker
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Static Analysis
+        run: |
+          cd ch4
+          docker-compose build static-analysis
+          docker-compose run static-analysis
