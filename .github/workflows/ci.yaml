@@ -46,3 +46,21 @@ jobs:
           docker-compose build static-analysis
           docker-compose run static-analysis
 
+      - name: Build Docker Images
+        run: |
+          cd Chapter04
+          docker-compose build server
+
+      - name: Login to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker Images
+        run: |
+          docker tag thoughts_server:latest cruxifix/thoughts-backend:${{ env.GIT_SHA }}
+          docker push cruxifix/thoughts-backend:${{ env.GIT_SHA }}
+          docker tag thoughts_server:latest cruxifix/thoughts-backend:${{ github.ref_name }}
+          docker push cruxifix/thoughts-backend:${{ github.ref_name }}
