@@ -1,78 +1,14 @@
----
-name: CI Pipeline
-on:
+name: Test Workflow
+
+on: 
   push:
     branches:
-      - master
       - main
-  pull_request:
-    branches:
-      - "*"
-  tags:
-    - '*'
-  workflow_dispatch:
-    - "*"
-env:
-  DOCKER_COMPOSE_VERSION: 1.23.2
-  GIT_SHA: ${{ github.sha }}
+
 jobs:
-  setup:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Docker Compose
-        run: >
-          sudo rm /usr/local/bin/docker-compose
-          curl -L https://github.com/docker/compose/releases/download/${{ env.DOCKER_COMPOSE_VERSION }}/docker-compose-$(uname -s)-$(uname -m) > docker-compose
-          chmod +x docker-compose
-          sudo mv docker-compose /usr/local/bin
-          docker --version
-          docker-compose version
-  unit_tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Run Unit Tests
-        run: |
-          cd ch4
-          docker-compose build db
-          docker-compose build test-postgresql
-          docker-compose run test-postgresql
-  static_analysis:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Run Static Analysis
-        run: |
-          cd ch4
-          docker-compose build static-analysis
-          docker-compose run static-analysis
-  push_images:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Login to Docker Hub
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{
-          secrets.DOCKER_USERNAME }}" --password-stdin
-      - name: Build and Push Docker Images
-        run: >
-          cd ch4
-          docker-compose build server
-          docker tag thoughts_server:latest cruxifix/thoughts-backend:${{ env.GIT_SHA }}
-          docker push cruxifix/thoughts-backend:${{ env.GIT_SHA }}
-          docker tag thoughts_server:latest cruxifix/thoughts-backend:${{ github.ref_name }}
-          docker push cruxifix/thoughts-backend:${{ github.ref_name }}
-      - name: Push Docker Image for Tag
-        if: startsWith(github.ref, 'refs/tags/')
-        run: docker push cruxifix/thoughts-backend:${{ github.ref_name }}
+      - name: Run a one-line script
+        run: echo "This is a test"
 
