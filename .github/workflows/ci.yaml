@@ -1,14 +1,21 @@
-name: Test Workflow
+name: CI Pipeline
 
-on: 
+on:
   push:
     branches:
-      - main
+      - master
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch:
 
 jobs:
-  test:
+  example_job:
     runs-on: ubuntu-latest
     steps:
-      - name: Run a one-line script
-        run: echo "This is a test"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run a test command
+        run: echo "Test is successful"
 
