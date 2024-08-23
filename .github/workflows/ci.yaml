@@ -49,9 +49,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: List directory contents
+        run: |
+          echo "Listing contents of the current directory:"
+          ls -al
+          echo "Listing contents of subdirectories:"
+          find . -type d
+
       - name: Run Unit Tests
         run: |
-          cd ch4
+          cd Chapter04
           docker-compose build db
           docker-compose build test-postgresql
           docker-compose run test-postgresql
@@ -63,8 +70,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: List directory contents
+        run: |
+          echo "Listing contents of the current directory:"
+          ls -al
+          echo "Listing contents of subdirectories:"
+          find . -type d
+
       - name: Run Static Analysis
         run: |
-          cd ch4
+          cd Chapter04
           docker-compose build static-analysis
           docker-compose run static-analysis
