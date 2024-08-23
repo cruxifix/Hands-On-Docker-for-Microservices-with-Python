@@ -31,15 +31,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker Compose
+  setup_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Docker Compose
         run: |
-          if [ -f /usr/local/bin/docker-compose ]; then
-            sudo rm /usr/local/bin/docker-compose
-          fi
-          curl -L https://github.com/docker/compose/releases/download/${{ env.DOCKER_COMPOSE_VERSION }}/docker-compose-$(uname -s)-$(uname -m) > docker-compose
-          chmod +x docker-compose
-          sudo mv docker-compose /usr/local/bin
-          docker --version
+          curl -L https://github.com/docker/compose/releases/download/${{ env.DOCKER_COMPOSE_VERSION }}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: Verify Docker Compose Installation
+        run: |
           docker-compose version
 
   unit_tests:
