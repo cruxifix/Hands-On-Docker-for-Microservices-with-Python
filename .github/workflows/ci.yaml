@@ -24,4 +24,22 @@ jobs:
         run: |
           echo "DOCKER_COMPOSE_VERSION: $DOCKER_COMPOSE_VERSION"
           echo "GIT_SHA: $GIT_SHA"
+  setup_docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
+      - name: Set up Docker Compose
+        run: |
+          sudo rm /usr/local/bin/docker-compose
+          curl -L https://github.com/docker/compose/releases/download/${{ env.DOCKER_COMPOSE_VERSION }}/docker-compose-$(uname -s)-$(uname -m) > docker-compose
+          chmod +x docker-compose
+          sudo mv docker-compose /usr/local/bin
+          docker --version
+          docker-compose version
+
+      - name: Print environment variables
+        run: |
+          echo "DOCKER_COMPOSE_VERSION: $DOCKER_COMPOSE_VERSION"
+          echo "GIT_SHA: $GIT_SHA"
